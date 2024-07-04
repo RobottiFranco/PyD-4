@@ -1,42 +1,71 @@
-parte 1
-file_path = 'titanik.csv'
-titanic_df = pd.read_csv(file_path)
+Claro, aquí tienes una descripción matemática para cada punto del código que hemos desarrollado:
 
-parte 2
+### 1. Carga de datos y limpieza inicial
 
-Para corregir los valores vacíos en la columna "age" usando la media de las edades según el género de los pasajeros hay que:
+#### Cargar el archivo CSV:
+\[ \text{file\_path} = \text{'titanik.csv'} \]
+\[ \text{titanic\_df} = \text{pd.read\_csv(file\_path)} \]
 
-Calcular la media de las edades para hombres y mujeres por separado.
-Rellenar los valores vacíos en la columna "age" con la media correspondiente según el género del pasajero.
+#### Rellenar valores faltantes en la columna 'age' usando la media por género:
+\[ \text{mean\_age\_male} = \text{titanic\_df}[\text{titanic\_df['gender'] == 'male']}['age'].mean() \]
+\[ \text{mean\_age\_female} = \text{titanic\_df}[\text{titanic\_df['gender'] == 'female']}['age'].mean() \]
+\[ \text{titanic\_df.loc[(titanic\_df['gender'] == 'male'), 'age']} = \text{mean\_age\_male} \]
+\[ \text{titanic\_df.loc[(titanic\_df['gender'] == 'female'), 'age']} = \text{mean\_age\_female} \]
 
-justificacion:
-La edad de los pasajeros puede estar correlacionada con su género. Por ejemplo, en algunos casos, la media de edad de los hombres puede ser diferente de la media de edad de las mujeres en un conjunto de datos.
-Al usar la media de edad específica del género, se preserva mejor la distribución original de los datos y se evita introducir sesgos significativos que podrían ocurrir si se usara una única media para todos los pasajeros.
+### 2. Estadísticas descriptivas
 
-parte 3
-Media: La media aritmética de las edades.
-Mediana: El valor central de las edades cuando están ordenadas.
-Moda: El valor más frecuente en las edades.
-Rango: La diferencia entre la edad máxima y la edad mínima.
-Varianza: La medida de la dispersión de las edades respecto a la media.
-Desviación estándar: La raíz cuadrada de la varianza, que también mide la dispersión de las edades.
+#### Media:
+\[ \text{mean\_age} = \text{titanic\_df}['age'].mean() \]
 
-#parte 4
-Para calcular la tasa de supervivencia general, podemos dividir el número de sobrevivientes entre el número total de pasajeros y multiplicar por 100 para obtener el porcentaje.
+#### Mediana:
+\[ \text{median\_age} = \text{titanic\_df}['age'].median() \]
 
-Total de pasajeros: Contamos el número total de filas.
-Total de sobrevivientes: Sumamos los valores en la columna survived (donde 1 indica que el pasajero sobrevivió).
-Tasa de supervivencia: Dividimos el número de sobrevivientes entre el número total de pasajeros y multiplicamos por 100 para obtener el porcentaje.
+#### Moda:
+\[ \text{mode\_age} = \text{titanic\_df}['age'].mode()[0] \]
 
-#parte 5
-Para calcular la tasa de supervivencia por género, necesitamos dividir el número de sobrevivientes de cada género entre el número total de pasajeros de ese género y luego multiplicar por 100 para obtener el porcentaje.
+#### Rango:
+\[ \text{range\_age} = \text{titanic\_df}['age'].max() - \text{titanic\_df}['age'].min() \]
 
-Total de pasajeros por género: Usamos value_counts() para contar el número de pasajeros de cada género.
-Total de sobrevivientes por género: Filtramos el dataframe para sobrevivientes y usamos value_counts() para contar el número de sobrevivientes de cada género.
-Tasa de supervivencia por género: Dividimos el número de sobrevivientes de cada género entre el número total de pasajeros de ese género y multiplicamos por 100 para obtener el porcentaje.
+#### Varianza:
+\[ \text{variance\_age} = \text{titanic\_df}['age'].var() \]
 
-#parte 6
-Para realizar un histograma de las edades de los pasajeros por clase y proponer un modelo para la distribución de la variable edad en el barco, seguiremos estos pasos:
+#### Desviación estándar:
+\[ \text{std\_dev\_age} = \text{titanic\_df}['age'].std() \]
 
-Crear histogramas de las edades para cada clase de pasajero (primera, segunda y tercera).
-Proponer un modelo para la distribución de la variable edad en el barco.
+### 3. Tasa de supervivencia
+
+#### Tasa de supervivencia general:
+\[ \text{total\_passengers} = \text{len(titanic\_df)} \]
+\[ \text{total\_survivors} = \text{titanic\_df}['survived'].sum() \]
+\[ \text{survival\_rate} = \left( \frac{\text{total\_survivors}}{\text{total\_passengers}} \right) \times 100 \]
+
+#### Tasa de supervivencia por género:
+\[ \text{total\_passengers\_gender} = \text{titanic\_df}['gender'].value\_counts() \]
+\[ \text{total\_survivors\_gender} = \text{titanic\_df}[\text{titanic\_df['survived'] == 1}]['gender'].value\_counts() \]
+\[ \text{survival\_rate\_male} = \left( \frac{\text{total\_survivors\_gender}['male']}{\text{total\_passengers\_gender}['male']} \right) \times 100 \]
+\[ \text{survival\_rate\_female} = \left( \frac{\text{total\_survivors\_gender}['female']}{\text{total\_passengers\_gender}['female']} \right) \times 100 \]
+
+### 4. Histogramas de edades por clase
+
+#### Creación de histogramas:
+\[ \text{plt.hist(titanic\_df[titanic\_df['p\_class'] == 1]['age'].dropna(), bins=20, edgecolor='black')} \]
+\[ \text{plt.hist(titanic\_df[titanic\_df['p\_class'] == 2]['age'].dropna(), bins=20, edgecolor='black')} \]
+\[ \text{plt.hist(titanic\_df[titanic\_df['p\_class'] == 3]['age'].dropna(), bins=20, edgecolor='black')} \]
+
+### 5. Ajuste de distribución normal
+
+#### Ajuste y visualización de la distribución normal:
+\[ \text{ages\_all} = \text{titanic\_df}['age'].dropna() \]
+\[ \text{mu, std} = \text{norm.fit(ages\_all)} \]
+\[ \text{x} = \text{np.linspace(xmin, xmax, 100)} \]
+\[ \text{p} = \text{norm.pdf(x, mu, std)} \]
+
+### 6. Diagramas de caja de edades de supervivientes y no supervivientes
+
+#### Creación de diagramas de caja:
+\[ \text{survived\_ages} = \text{titanic\_df[titanic\_df['survived'] == 1]['age'].dropna()} \]
+\[ \text{not\_survived\_ages} = \text{titanic\_df[titanic\_df['survived'] == 0]['age'].dropna()} \]
+\[ \text{plt.boxplot(survived\_ages, vert=False)} \]
+\[ \text{plt.boxplot(not\_survived\_ages, vert=False)} \]
+
+Estas descripciones proporcionan una visión matemática clara de cada paso realizado en el análisis de los datos del Titanic. Puedes usar estas descripciones en tu `readme.md` para documentar el código de manera detallada.
