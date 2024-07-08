@@ -120,3 +120,103 @@ plt.ylabel('No Supervivientes')
 
 plt.tight_layout()
 plt.show()
+
+# Calcular la media y la desviación estándar
+mu = titanic_df['age'].mean()
+std = titanic_df['age'].std()
+
+# Tamaño de la muestra
+n = len(titanic_df['age'].dropna())
+
+# Error estándar de la media
+sem = std / np.sqrt(n)
+
+# Valor crítico para un nivel de confianza del 95%
+confidence_level = 0.95
+degrees_freedom = n - 1
+t_critical = stats.t.ppf((1 + confidence_level) / 2, degrees_freedom)
+
+# Calcular el margen de error
+margin_of_error = t_critical * sem
+
+# Calcular el intervalo de confianza
+confidence_interval = (mu - margin_of_error, mu + margin_of_error)
+
+print(f"Intervalo de confianza del 95% para la edad promedio: {confidence_interval[0]:.2f} - {confidence_interval[1]:.2f}")
+
+# Número total de hombres y mujeres
+n_male = len(titanic_df[titanic_df['gender'] == 'male'])
+n_female = len(titanic_df[titanic_df['gender'] == 'female'])
+
+# Error estándar de la media
+sem_male = titanic_df[titanic_df['gender'] == 'male']['age'].std() / np.sqrt(n_male)
+sem_female = titanic_df[titanic_df['gender'] == 'female']['age'].std() / np.sqrt(n_female)
+
+# Valor crítico para un intervalo de confianza del 95%
+confidence_level = 0.95
+alpha = 1 - confidence_level
+t_critical = stats.t.ppf(1 - alpha/2, df=n_male-1)  # Grados de libertad = n - 1
+
+# Intervalo de confianza para hombres
+ci_male_lower = mean_age_male - t_critical * sem_male
+ci_male_upper = mean_age_male + t_critical * sem_male
+
+# Intervalo de confianza para mujeres
+ci_female_lower = mean_age_female - t_critical * sem_female
+ci_female_upper = mean_age_female + t_critical * sem_female
+
+# Mostrar los intervalos de confianza
+print(f"Intervalo de confianza del 95% para la media de edad de los hombres: {ci_male_lower:.2f} - {ci_male_upper:.2f}")
+print(f"Intervalo de confianza del 95% para la media de edad de las mujeres: {ci_female_lower:.2f} - {ci_female_upper:.2f}")
+
+# Verificar si los intervalos están por encima de 56 años
+is_male_above_56 = ci_male_lower > 56
+is_female_above_56 = ci_female_lower > 56
+
+print(f"¿La media de edad de los hombres es mayor a 56 años con un 95% de certeza? {'Sí' if is_male_above_56 else 'No'}")
+print(f"¿La media de edad de las mujeres es mayor a 56 años con un 95% de certeza? {'Sí' if is_female_above_56 else 'No'}")
+
+# Calcular la tasa de supervivencia por género
+total_passengers_gender = titanic_df['gender'].value_counts()
+total_survivors_gender = titanic_df.groupby('gender')['survived'].sum()
+
+# Calcular la tasa de supervivencia por género
+survival_rate_gender = (total_survivors_gender / total_passengers_gender) * 100
+
+# Prueba para comparar las tasas de supervivencia entre hombres y mujeres
+survived_male = titanic_df[titanic_df['gender'] == 'male']['survived']
+survived_female = titanic_df[titanic_df['gender'] == 'female']['survived']
+
+t_stat, p_value = stats.ttest_ind(survived_male, survived_female)
+
+alpha = 0.01  # Nivel de significancia del 1%
+
+if p_value < alpha:
+    print("Existe una diferencia significativa en la tasa de supervivencia entre hombres y mujeres.")
+else:
+    print("No se puede afirmar una diferencia significativa en la tasa de supervivencia entre hombres y mujeres.")
+
+# Calcular la tasa de supervivencia por clase
+total_passengers_class = titanic_df['p_class'].value_counts()
+total_survivors_class = titanic_df.groupby('p_class')['survived'].sum()
+
+# Calcular la tasa de supervivencia por clase
+survival_rate_class = (total_survivors_class / total_passengers_class) * 100
+
+# Prueba de hipótesis para comparar las tasas de supervivencia entre las distintas clases
+survived_class1 = titanic_df[titanic_df['p_class'] == 1]['survived']
+survived_class2 = titanic_df[titanic_df['p_class'] == 2]['survived']
+survived_class3 = titanic_df[titanic_df['p_class'] == 3]['survived']
+
+# Comparación de la tasa de supervivencia entre las distintas clases usando prueba t de Student
+t_stat1_2, p_value1_2 = stats.ttest_ind(survived_class1, survived_class2)
+t_stat1_3, p_value1_3 = stats.ttest_ind(survived_class1, survived_class3)
+t_stat2_3, p_value2_3 = stats.ttest_ind(survived_class2, survived_class3)
+
+alpha = 0.01  # Nivel de significancia del 1%
+
+# Interpretación de los resultados
+if p_value1_2 < alpha or p_value1_3 < alpha or p_value2_3 < alpha:
+    print("Existe una diferencia significativa en la tasa de supervivencia entre al menos dos clases.")
+else:
+    print("No hay suficiente evidencia para afirmar que existe una diferencia significativa en la tasa de supervivencia entre las distintas clases.")
