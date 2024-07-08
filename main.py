@@ -1,6 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-from scipy.stats import norm
+from scipy.stats import norm, mode
 import numpy as np
 from scipy import stats
 
@@ -16,13 +16,34 @@ mean_age_female = titanic_df.loc[titanic_df['gender'] == 'female', 'age'].mean()
 titanic_df.loc[titanic_df['gender'] == 'male', 'age'].fillna(mean_age_male, inplace=True)
 titanic_df.loc[titanic_df['gender'] == 'female', 'age'].fillna(mean_age_female, inplace=True)
 
-
-# Estadísticas descriptivas
+# Calcular estadísticas descriptivas básicas
 age_descriptive_stats = titanic_df['age'].describe()
 
-# Mostrar las estadísticas calculadas
+# Calcular la moda
+mode_age = titanic_df['age'].mode().iloc[0]
+
+# Calcular el rango
+range_age = titanic_df['age'].max() - titanic_df['age'].min()
+
+# Calcular la varianza
+variance_age = titanic_df['age'].var()
+
+# Crear un nuevo DataFrame con las estadísticas ordenadas
+ordered_stats_df = pd.DataFrame({
+    'mean': age_descriptive_stats['mean'],
+    '50%': age_descriptive_stats['50%'],
+    'mode': mode_age,
+    'range': range_age,
+    'variance': variance_age,
+    'std': age_descriptive_stats['std'],
+}, index=[0])
+
+# Mostrar las estadísticas en el orden
 print("Estadísticas descriptivas de las edades:")
-print(age_descriptive_stats)
+for index, row in ordered_stats_df.iterrows():
+    for stat, value in row.items():
+        print(f"{stat}: {value}")
+
 
 # Calcular la tasa de supervivencia
 total_passengers = len(titanic_df)
